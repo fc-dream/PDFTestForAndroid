@@ -1,0 +1,76 @@
+/*
+ * $Id: TrueType.java 3373 2008-05-12 16:21:24Z xlv $
+ *
+ * This code is part of the 'iText Tutorial'.
+ * You can find the complete tutorial at the following address:
+ * http://itextdocs.lowagie.com/tutorial/
+ *
+ * This code is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ *
+ * itext-questions@lists.sourceforge.net
+ */
+package com.lowagie.examples.fonts;
+
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
+import com.example.pdftest.PdfTestRunner;
+import com.example.pdftest.R;
+import com.lowagie.text.Document;
+import com.lowagie.text.DocumentException;
+import com.lowagie.text.Font;
+import com.lowagie.text.Paragraph;
+import com.lowagie.text.pdf.BaseFont;
+import com.lowagie.text.pdf.PdfWriter;
+
+/**
+ * Using a True Type Font.
+ */
+public class TrueType {
+
+	/**
+	 * Using a True Type Font.
+	 * 
+	 * @param args
+	 *            np arguments needed
+	 */
+	public static void main(String[] args) {
+
+		System.out.println("True Type fonts (not embedded)");
+
+		// step 1: creation of a document-object
+		Document document = new Document();
+
+		try {
+			// step 2:
+			// we create a writer that listens to the document
+			// and directs a PDF-stream to a file
+			PdfWriter.getInstance(document, new FileOutputStream(android.os.Environment.getExternalStorageDirectory() + java.io.File.separator + "droidtext" + java.io.File.separator + "truetype.pdf"));
+
+			// step 3: we open the document
+			document.open();
+
+			// step 4: we add content to the document
+			//Don't use path read ttf into byte[] instead
+//			BaseFont bfComic = BaseFont.createFont("c:\\windows\\fonts\\comic.ttf", BaseFont.IDENTITY_H,
+//					BaseFont.EMBEDDED);
+			InputStream inputStream = PdfTestRunner.getActivity().getResources().openRawResource(R.raw.freesans);
+			byte[] buffer = new byte[inputStream.available()];
+			inputStream.read(buffer);
+			BaseFont bfComic = BaseFont.createFont("freeserif.ttf", BaseFont.IDENTITY_H, true, false, buffer, null);
+			Font font = new Font(bfComic, 12);
+			String text1 = "This is the quite popular True Type font 'Comic'.";
+			document.add(new Paragraph(text1, font));
+		} catch (DocumentException de) {
+			System.err.println(de.getMessage());
+		} catch (IOException ioe) {
+			System.err.println(ioe.getMessage());
+		}
+
+		// step 5: we close the document
+		document.close();
+	}
+}
